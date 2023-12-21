@@ -20,16 +20,47 @@ struct Score {
 }
 
 fn main() {
-    let throw = throw_dart(50.0);
-    println!("x: {}, y: {}", throw.x, throw.y);
-    let score = compute_score(throw);
-    println!("Score: {} ({})", score.value, score.representation);
+
+    let aim_bullseye = DartThrow { x: 0.0, y: 0.0 };
+    let aim_t20 = DartThrow { x: 0.0, y: 103.0 };
+    let aim_t19 = DartThrow { x: -31.83, y: -97.96};
+    let aim_t18 = DartThrow { x: 60.54, y: 83.33};
+    let aim_t17 = DartThrow { x: 31.83, y: -97.96};
+    let aim_t16 = DartThrow { x: -83.33, y: -60.54};
+    let aim_t15 = DartThrow { x: 83.33, y: -60.54};
+    let aim_t14 = DartThrow { x: -97.96, y: 31.83};
+
+
+    let score = compute_score(aim_bullseye);
+    println!("Aiming at bullseye: {} ({})", score.representation, score.value);
+
+    let score = compute_score(aim_t20);
+    println!("Aiming at T20: {} ({})", score.representation, score.value);
+
+    let score = compute_score(aim_t19);
+    println!("Aiming at T19: {} ({})", score.representation, score.value);
+
+    let score = compute_score(aim_t18);
+    println!("Aiming at T18: {} ({})", score.representation, score.value);
+
+    let score = compute_score(aim_t17);
+    println!("Aiming at T17: {} ({})", score.representation, score.value);
+
+    let score = compute_score(aim_t16);
+    println!("Aiming at T16: {} ({})", score.representation, score.value);
+
+    let score = compute_score(aim_t15);
+    println!("Aiming at T15: {} ({})", score.representation, score.value);
+
+    let score = compute_score(aim_t14);
+    println!("Aiming at T14: {} ({})", score.representation, score.value);
+    
 }
 
 
-fn throw_dart(dispersion_mm: f64) -> DartThrow {
-    let x: f64 = thread_rng().sample(Normal::new(0.0, dispersion_mm).unwrap());
-    let y: f64 = thread_rng().sample(Normal::new(0.0, dispersion_mm).unwrap());
+fn throw_dart(dispersion_mm: f64, target: DartThrow) -> DartThrow {
+    let x: f64 = thread_rng().sample(Normal::new(target.x, dispersion_mm).unwrap());
+    let y: f64 = thread_rng().sample(Normal::new(target.y, dispersion_mm).unwrap());
     DartThrow { x, y }
 }
 
