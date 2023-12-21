@@ -30,35 +30,32 @@ fn main() {
     let aim_t15 = DartThrow { x: 83.33, y: -60.54};
     let aim_t14 = DartThrow { x: -97.96, y: 31.83};
 
+    let dispersion_mm = 50.0;
+    let n_sims = 100000;
 
-    let score = compute_score(aim_bullseye);
-    println!("Aiming at bullseye: {} ({})", score.representation, score.value);
+    println!("Aiming at bullseye: {}", run_simulation(&aim_bullseye, dispersion_mm, n_sims));
+    println!("Aiming at T20: {}", run_simulation(&aim_t20, dispersion_mm, n_sims));
+    println!("Aiming at T19: {}", run_simulation(&aim_t19, dispersion_mm, n_sims));
+    println!("Aiming at T18: {}", run_simulation(&aim_t18, dispersion_mm, n_sims));
+    println!("Aiming at T17: {}", run_simulation(&aim_t17, dispersion_mm, n_sims));
+    println!("Aiming at T16: {}", run_simulation(&aim_t16, dispersion_mm, n_sims));
+    println!("Aiming at T15: {}", run_simulation(&aim_t15, dispersion_mm, n_sims));
+    println!("Aiming at T14: {}", run_simulation(&aim_t14, dispersion_mm, n_sims));
 
-    let score = compute_score(aim_t20);
-    println!("Aiming at T20: {} ({})", score.representation, score.value);
+}
 
-    let score = compute_score(aim_t19);
-    println!("Aiming at T19: {} ({})", score.representation, score.value);
-
-    let score = compute_score(aim_t18);
-    println!("Aiming at T18: {} ({})", score.representation, score.value);
-
-    let score = compute_score(aim_t17);
-    println!("Aiming at T17: {} ({})", score.representation, score.value);
-
-    let score = compute_score(aim_t16);
-    println!("Aiming at T16: {} ({})", score.representation, score.value);
-
-    let score = compute_score(aim_t15);
-    println!("Aiming at T15: {} ({})", score.representation, score.value);
-
-    let score = compute_score(aim_t14);
-    println!("Aiming at T14: {} ({})", score.representation, score.value);
-    
+fn run_simulation(aim: &DartThrow, dispersion_mm: f64, n_sims: i32) -> f64 {
+    let mut total_score: i32 = 0;
+    for _i in 0..n_sims {
+        let throw = throw_dart(dispersion_mm, aim);
+        let score = compute_score(throw);
+        total_score += score.value as i32;
+    }
+    f64::from(total_score) / n_sims as f64
 }
 
 
-fn throw_dart(dispersion_mm: f64, target: DartThrow) -> DartThrow {
+fn throw_dart(dispersion_mm: f64, target: &DartThrow) -> DartThrow {
     let x: f64 = thread_rng().sample(Normal::new(target.x, dispersion_mm).unwrap());
     let y: f64 = thread_rng().sample(Normal::new(target.y, dispersion_mm).unwrap());
     DartThrow { x, y }
@@ -109,7 +106,7 @@ fn compute_score(throw: DartThrow) -> Score {
 fn compute_segment(throw: DartThrow) -> u8 {
     const SEGMENTS: [u8; 20] = [20, 1, 18, 4, 13, 6, 10, 15, 2, 17, 3, 19, 7, 16, 8, 11, 14, 9, 12, 5];
     let angle = (throw.x.atan2(throw.y).to_degrees() + 360.0) % 360.0;
-    let segment = (angle + 9.0) / 18.0;
+    let segment = ((angle + 9.0) / 18.0) % 20.0;
     SEGMENTS[segment as usize]
 }
 
