@@ -1,8 +1,8 @@
 use rand::prelude::*;
 use rand_distr::Normal;
 
-const INNER_BULLSEYE_RADIUS_MM: f64 = 12.7;
-const OUTER_BULLSEYE_RADIUS_MM: f64 = 32.0;
+const INNER_BULLSEYE_RADIUS_MM: f64 = 6.35;
+const OUTER_BULLSEYE_RADIUS_MM: f64 = 16.0;
 const DOUBLE_RING_INNER_RADIUS_MM: f64 = 162.0;
 const DOUBLE_RING_OUTER_RADIUS_MM: f64 = 170.0;
 const TRIPLE_RING_INNER_RADIUS_MM: f64 = 99.0;
@@ -30,7 +30,7 @@ fn main() {
     let aim_t15 = DartThrow { x: 83.33, y: -60.54};
     let aim_t14 = DartThrow { x: -97.96, y: 31.83};
 
-    let dispersion_mm = 50.0;
+    let dispersion_mm = 20.0;
     let n_sims = 100000;
 
     println!("Aiming at bullseye: {}", run_simulation(&aim_bullseye, dispersion_mm, n_sims));
