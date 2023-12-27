@@ -14,12 +14,12 @@ const TRIPLE_RING_OUTER_RADIUS_MM: f64 = 107.0;
 struct DartThrow {
     x: f64,
     y: f64,
+    label: String,
 }
 
 impl std::fmt::Display for DartThrow {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let score = compute_score(self.clone());
-        write!(f, "{}", score.representation)
+        write!(f, "{}", self.label)
     }
 }
 
@@ -58,30 +58,29 @@ fn main() {
         println!("Dispersion: {}mm", dispersion_mm);
         println!("Best to worst average scores:");
         for (sim_input, sim_result) in sim_results.iter() {
-            println!("\t{}: {:.2} (std_dev: {:.2})", sim_input.aim, sim_result.average_score, sim_result.std_dev);
+            println!("\t{}: {:.2} (std_dev: {:.2})", sim_input.aim, sim_result.average_score, sim_result.std_dev);            
         }
     }
 }
 
 fn run_comparison_simulations(dispersion_mm: f64, n_sims: i32) -> Vec<(SimulationInput, SimulationResult)> {
 
-    let aim_points: HashMap<String, DartThrow> = HashMap::from([
-        ("bullseye".to_string(), DartThrow { x: 0.0, y: 0.0 }),
-        ("t20".to_string(), DartThrow { x: 0.0, y: 103.0 }),
-        ("t19".to_string(), DartThrow { x: -31.83, y: -97.96}),
-        ("t18".to_string(), DartThrow { x: 60.54, y: 83.33}),
-        ("t17".to_string(), DartThrow { x: 31.83, y: -97.96}),
-        ("t16".to_string(), DartThrow { x: -83.33, y: -60.54}),
-        ("t15".to_string(), DartThrow { x: 83.33, y: -60.54}),
-        ("t14".to_string(), DartThrow { x: -97.96, y: 31.83}),
-    
-    ]);
+    let aim_points: [DartThrow; 8] = [
+        DartThrow { label: "Bullseye".to_string(), x: 0.0, y: 0.0 },
+        DartThrow { label: "T20".to_string(), x: 0.0, y: 103.0 },
+        DartThrow { label: "T19".to_string(), x: -31.83, y: -97.96},
+        DartThrow { label: "T18".to_string(), x: 60.54, y: 83.33},
+        DartThrow { label: "T17".to_string(), x: 31.83, y: -97.96},
+        DartThrow { label: "T16".to_string(), x: -83.33, y: -60.54},
+        DartThrow { label: "T15".to_string(), x: 83.33, y: -60.54},
+        DartThrow { label: "T14".to_string(), x: -97.96, y: 31.83},
+    ];
 
     let mut simulations: Vec<(SimulationInput, SimulationResult)> = Vec::new();
     
-    for (_aim_name, aim) in aim_points.into_iter() {
+    for aim_point in aim_points.into_iter() {
         let sim_input = SimulationInput {
-            aim: aim.clone(),
+            aim: aim_point.clone(),
             dispersion_mm,
             n_sims,
         };
@@ -123,7 +122,7 @@ fn run_simulation(sim_input: &SimulationInput) -> SimulationResult {
 fn throw_dart(dispersion_mm: f64, target: &DartThrow) -> DartThrow {
     let x: f64 = thread_rng().sample(Normal::new(target.x, dispersion_mm).unwrap());
     let y: f64 = thread_rng().sample(Normal::new(target.y, dispersion_mm).unwrap());
-    DartThrow { x, y }
+    DartThrow {label: "".to_string(), x, y }
 }
 
 fn in_treble_ring(distance: f64) -> bool {
