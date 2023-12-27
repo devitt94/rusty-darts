@@ -39,6 +39,7 @@ struct SimulationInput {
 struct SimulationResult {
     average_score: f64,
     score_counts: HashMap<Score, i32>,
+    std_dev: f64,
 }
 
 impl std::fmt::Display for SimulationResult {
@@ -51,13 +52,13 @@ fn main() {
 
     let dispersion_range: Vec<f64> = (0..=20).map(|x| x as f64).map(|x| (x * 2.5) + 5.0).collect();
 
-    let n_sims = 100000;
+    let n_sims = 200000;
     for dispersion_mm in dispersion_range {
         let sim_results = run_comparison_simulations(dispersion_mm, n_sims);
         println!("Dispersion: {}mm", dispersion_mm);
         println!("Best to worst average scores:");
         for (sim_input, sim_result) in sim_results.iter() {
-            println!("\t{}: {}", sim_input.aim, sim_result.average_score);
+            println!("\t{}: {:.2} (std_dev: {:.2})", sim_input.aim, sim_result.average_score, sim_result.std_dev);
         }
     }
 }
@@ -107,8 +108,13 @@ fn run_simulation(sim_input: &SimulationInput) -> SimulationResult {
         }
     }
     let average_score: f64 = f64::from(total_score) / sim_input.n_sims as f64;
+    let std_dev: f64 = score_counts.iter().map(|(score, count)| {
+        let score_diff = score.value as f64 - average_score;
+        score_diff.powi(2) * *count as f64
+    }).sum::<f64>().sqrt() / sim_input.n_sims as f64;
     SimulationResult {
         average_score,
+        std_dev,
         score_counts,
     }
 }
